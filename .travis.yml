@@ -56,7 +56,7 @@ deploy:
   provider: releases
   api_key:
     secure: C/MP3b9T5NZWWBUBwDyGQD989n7S9gwpwVw7apZ6FUkRONRHAV1mNUCaGOE1GU5HKO10xD7BFFb1HQ1ZkSowMcltTR7dQzCwQMojnBb9+lZTyUs/Lk4qMFN3DZOcMd5suFSKa9tVUmuD3S6jpzCfRStIwblejmNjWCCMcdXMolvFl7i/Qmf7kvIUzANXiX/yaX7KSMdcdaeLFeahB49CpDTC98fuDS6dbwmzjfc7CPnML4qmo22gCJAQ1P0eQ5ICohMonaf2wJ3XaPKok3WgmSxDhDNJ1oA2mRjEbx8LJGrMjPp1IdbgxQYPyEDO1gIkyQK6C0Sy5U1YYyqaAAGcxmvb9FoaPw2KoHvGKlNvzGwnV3LIIPufPeHI65HEM3P9dl4eRIw/xd8l0qdWNUt5yX1ZWPkF9OUeGN2sozdaRyMEwx1fAoK2jnRKg8/yYt5ILnLLTSWSambDwhkrwCgkAnmbZ3Jc3j6Bk2q53MnqZHDpIHEXen4/d3aCa2TeRt/5qra9JcpbYxJTnsA17jLVgmDZcs0Z6ihTbuKys7HfZbauicPZQuKcpxhmXYlDFP/8buc5ApWGwgCzmS1IVr8GxRa6ldtDAD+xNRvL4OSXLK7BMkOMIioNqVeB+/Rj7qXcyWPAQ1RLIQCgBoaHlKPlzRWYtT/LnyUBrIUUlq5qe2M=
-  file: PathOfBuilding.darwin.tar.xz
+  file: "${TRAVIS_BUILD_DIR}/${ARCHIVE_NAME}"
   on:
     repo: akorchev/pobfrontend
   skip_cleanup: 'true'
