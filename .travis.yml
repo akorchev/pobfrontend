@@ -1,69 +1,64 @@
 branches:
   except:
-    - PathOfBuilding
- 
+  - PathOfBuilding
 jobs:
   include:
   - stage: build OSX
     os: osx
     language: objective-c
     env:
-      - PATH=/usr/local/opt/qt/bin:$PATH
-      - LDFLAGS=-L/usr/local/opt/qt/lib
-      - CPPFLAGS=-I/usr/local/opt/qt/include
-      - PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig
+    - PATH=/usr/local/opt/qt/bin:$PATH
+    - LDFLAGS=-L/usr/local/opt/qt/lib
+    - CPPFLAGS=-I/usr/local/opt/qt/include
+    - PKG_CONFIG_PATH=/usr/local/opt/qt/lib/pkgconfig
     addons:
       homebrew:
         packages:
-          - make
-          - ninja
+        - make
+        - ninja
     script:
-      - make -f Makefile.darwin clean
-      - make -f Makefile.darwin tools
-      - make -f Makefile.darwin
-      - tar -cf - PathOfBuilding.app | xz -c > PathOfBuilding.darwin.tar.xz
-
-  - stage: build Linux        
+    - make -f Makefile.darwin clean
+    - make -f Makefile.darwin tools
+    - make -f Makefile.darwin
+    - tar -cf - PathOfBuilding.app | xz -c > PathOfBuilding.darwin.tar.xz
+  - stage: build Linux
     os: linux
     dist: bionic
     language: cpp
     addons:
       apt:
         packages:
-          - build-essential
-          - ninja-build
+        - build-essential
+        - ninja-build
     script:
-      - make -f Makefile.linux clean
-      - make -f Makefile.linux tools
-      - make -f Makefile.linux
-      - tar -cf - PathOfBuilding | xz -c > PathOfBuilding.linux.tar.xz
-      - tar -cf - -C ${TRAVIS_BUILD_DIR}/PathOfBuilding/ $(ls -A ${TRAVIS_BUILD_DIR}"/PathOfBuilding/") | xz -c > PathOfBuilding.linux.tar.xz
-
+    - make -f Makefile.linux clean
+    - make -f Makefile.linux tools
+    - make -f Makefile.linux
+    - tar -cf - PathOfBuilding | xz -c > PathOfBuilding.linux.tar.xz
+    - tar -cf - -C ${TRAVIS_BUILD_DIR}/PathOfBuilding/ $(ls -A ${TRAVIS_BUILD_DIR}"/PathOfBuilding/")
+      | xz -c > PathOfBuilding.linux.tar.xz
 before_deploy:
-  - export TR_TAG="nightly-$(date +'%Y/%m/%d')"
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      git config --local user.name "Bernhard Fritz"
-      git config --local user.email "bernhard.e.fritz@gmail.com"
-      git tag -f PathOfBuilding
-      git remote add gh https://${TRAVIS_REPO_SLUG%/*}:${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
-      git push -f gh PathOfBuilding
-      git remote remove gh
-      export ARCHIVE_NAME="PathOfBuilding.darwin.tar.xz"
-    fi
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      export ARCHIVE_NAME="PathOfBuilding.linux.tar.xz"
-    fi
-
+- export TR_TAG="nightly-$(date +'%Y/%m/%d')"
+- |
+  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    git config --local user.name "Bernhard Fritz"
+    git config --local user.email "bernhard.e.fritz@gmail.com"
+    git tag -f PathOfBuilding
+    git remote add gh https://${TRAVIS_REPO_SLUG%/*}:${GITHUB_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git
+    git push -f gh PathOfBuilding
+    git remote remove gh
+    export ARCHIVE_NAME="PathOfBuilding.darwin.tar.xz"
+  fi
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    export ARCHIVE_NAME="PathOfBuilding.linux.tar.xz"
+  fi
 deploy:
   provider: releases
-  api_key: $GITHUB_TOKEN
-  file:
-    - "${TRAVIS_BUILD_DIR}/${ARCHIVE_NAME}"
-  name: "PathOfBuilding"
-  overwrite: true
-  skip_cleanup: true
-  target_commitish: $TRAVIS_COMMIT
-
+  api_key:
+    secure: C/MP3b9T5NZWWBUBwDyGQD989n7S9gwpwVw7apZ6FUkRONRHAV1mNUCaGOE1GU5HKO10xD7BFFb1HQ1ZkSowMcltTR7dQzCwQMojnBb9+lZTyUs/Lk4qMFN3DZOcMd5suFSKa9tVUmuD3S6jpzCfRStIwblejmNjWCCMcdXMolvFl7i/Qmf7kvIUzANXiX/yaX7KSMdcdaeLFeahB49CpDTC98fuDS6dbwmzjfc7CPnML4qmo22gCJAQ1P0eQ5ICohMonaf2wJ3XaPKok3WgmSxDhDNJ1oA2mRjEbx8LJGrMjPp1IdbgxQYPyEDO1gIkyQK6C0Sy5U1YYyqaAAGcxmvb9FoaPw2KoHvGKlNvzGwnV3LIIPufPeHI65HEM3P9dl4eRIw/xd8l0qdWNUt5yX1ZWPkF9OUeGN2sozdaRyMEwx1fAoK2jnRKg8/yYt5ILnLLTSWSambDwhkrwCgkAnmbZ3Jc3j6Bk2q53MnqZHDpIHEXen4/d3aCa2TeRt/5qra9JcpbYxJTnsA17jLVgmDZcs0Z6ihTbuKys7HfZbauicPZQuKcpxhmXYlDFP/8buc5ApWGwgCzmS1IVr8GxRa6ldtDAD+xNRvL4OSXLK7BMkOMIioNqVeB+/Rj7qXcyWPAQ1RLIQCgBoaHlKPlzRWYtT/LnyUBrIUUlq5qe2M=
+  file: PathOfBuilding.darwin.tar.xz
+  on:
+    repo: akorchev/pobfrontend
+  skip_cleanup: 'true'
 after_deploy:
-  - bash github.sh
+- bash github.sh
