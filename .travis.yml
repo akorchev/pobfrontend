@@ -40,6 +40,7 @@ deploy:
   file: "${TRAVIS_BUILD_DIR}/${ARCHIVE_NAME}"
   on:
     repo: akorchev/pobfrontend
+  draft: 'true'
   skip_cleanup: 'true'
 after_deploy:
 - bash github.sh
