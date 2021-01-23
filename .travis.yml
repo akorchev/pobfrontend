@@ -21,22 +21,6 @@ jobs:
     - make -f Makefile.darwin tools
     - make -f Makefile.darwin
     - tar -cf - PathOfBuilding.app | xz -c > PathOfBuilding.darwin.tar.xz
-  - stage: build Linux
-    os: linux
-    dist: bionic
-    language: cpp
-    addons:
-      apt:
-        packages:
-        - build-essential
-        - ninja-build
-    script:
-    - make -f Makefile.linux clean
-    - make -f Makefile.linux tools
-    - make -f Makefile.linux
-    - tar -cf - PathOfBuilding | xz -c > PathOfBuilding.linux.tar.xz
-    - tar -cf - -C ${TRAVIS_BUILD_DIR}/PathOfBuilding/ $(ls -A ${TRAVIS_BUILD_DIR}"/PathOfBuilding/")
-      | xz -c > PathOfBuilding.linux.tar.xz
 before_deploy:
 - export TR_TAG="nightly-$(date +'%Y/%m/%d')"
 - |
@@ -48,9 +32,6 @@ before_deploy:
     git push -f gh PathOfBuilding
     git remote remove gh
     export ARCHIVE_NAME="PathOfBuilding.darwin.tar.xz"
-  fi
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    export ARCHIVE_NAME="PathOfBuilding.linux.tar.xz"
   fi
 deploy:
   provider: releases
