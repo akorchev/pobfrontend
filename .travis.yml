@@ -1,6 +1,7 @@
 branches:
   except:
   - PathOfBuilding
+ 
 jobs:
   include:
   - stage: build OSX
